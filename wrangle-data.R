@@ -14,6 +14,17 @@ fullpath <- file.path(path, filename)
 fullpath
 file.copy(fullpath, getwd())
 file.exists(filename)
+filename1 <- "life-expectancy-and-fertility-two-countries-example.csv"
+filename2 <- "fertility-two-countries-example.csv"
+dat1=read.csv(file.path(path, filename1))
+dat2=read.csv(file.path(path, filename2))
 dat <- read_csv(filename)
 dat <- read_csv(fullpath)
 head(dat)
+
+
+filename <- 'murders.csv'
+dat2 <- read.csv(filename)
+class(dat2)
+class(dat2$abb)
+class(dat2$region)
