@@ -24,7 +24,17 @@ head(dat)
 
 
 filename <- 'murders.csv'
-dat2 <- read.csv(filename)
-class(dat2)
-class(dat2$abb)
-class(dat2$region)
+dat3 <- read.csv(filename)
+class(dat3)
+class(dat3$abb)
+class(dat3$region)
+
+
+url <- "https://raw.githubusercontent.com/rafalab/dslabs/master/inst/extdata/murders.csv"
+dat4 <- read_csv(url)
+download.file(url,'murders.csv')
+tempfile()
+tmp_filename <- tempfile()
+download.file(url, tmp_filename)
+dat <- read_csv(tmp_filename)
+file.remove(tmp_filename)
