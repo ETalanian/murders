@@ -36,5 +36,12 @@ download.file(url,'murders.csv')
 tempfile()
 tmp_filename <- tempfile()
 download.file(url, tmp_filename)
-dat <- read_csv(tmp_filename)
+dat4 <- read_csv(tmp_filename)
 file.remove(tmp_filename)
+
+
+url2 <- 'https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data'
+dat5 <- read_csv(url2, col_names = FALSE)
+##?read_csv
+head(dat5)
+dat5
