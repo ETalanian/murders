@@ -13,4 +13,10 @@ tidy_data %>%
   ggplot(aes(year, fertility, color = country)) +
   geom_point()
 
+#Tidy Data:  Each row represents one observation and the columns represent the different variables that we have data on for those observations
 #import and inspect example of original Gapminder data in wide format
+path <- system.file('extdata',package='dslabs')
+filename <- file.path(path, 'fertility-two-countries-example.csv')
+wide_data <- read_csv(filename)
+select(wide_data,country,'1960':'1967')
+#wide format:  Each row includes several observations, and one of the variables is stored in the header
