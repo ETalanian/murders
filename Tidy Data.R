@@ -44,3 +44,38 @@ new_tidy_data %>%
 #sometimes we need data to be WideHard and not tiny, `spread()` is used for this.
 new_wide_data <- new_tidy_data %>% spread(year, fertility)
 select(new_wide_data, country, '1960':'1967')
+
+
+
+path <- system.file('extdata',package='dslabs')
+filename <- file.path(path, 'life-expectancy-and-fertility-two-countries-example.csv')
+raw_dat <- read_csv(filename)
+select(raw_dat,1:5)
+
+dat <- raw_dat %>% gather(key,value,-country)
+head(dat)
+
+#separate `year` and `type` via identifier _ 
+dat %>% separate(key, c("year","variable_name"), "_")
+#_ is the default separater, so we can just write
+dat %>% separate(key, c('year','variable_name'))
+#warning shows that "life_expectancy" breaks due to this
+#split on all underscores, pad empty cells with NA
+dat %>% separate(key, c("year", "first_variable_name", "second_variable_name"), fill = "right")
+#split on FIRST underscore, but keep life_expectancy merged, then spread
+dat %>% separate(key, c('year', 'variable_name'), sep='_', extra="merge") %>% spread(variable_name, value)
+#separate then unite
+dat %>% separate(key, c("year", 'first_variable_name','second_variable_name'), fill = "right") %>%
+        unite(variable_name, first_variable_name, second_variable_name, sep='_')
+#full tidy code
+dat %>% 
+  separate(key, c("year", "first_variable_name", "second_variable_name"), fill = "right") %>%
+  unite(variable_name, first_variable_name, second_variable_name, sep="_") %>%
+  spread(variable_name, value) %>%
+  rename(fertility = fertility_NA)
+
+
+
+
+
+
