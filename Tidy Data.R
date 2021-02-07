@@ -21,6 +21,9 @@ wide_data <- read_csv(filename)
 select(wide_data,country,'1960':'1967')
 ##wide format:  Each row includes several observations, and one of the variables is stored in the header
 
+##gather(data_set, *sets name of columns that will hold variable in*, *sets column name for columns*, *columns to be gathered*)
+##spread(data_set, *sets which variable will be used as the column names*, *which variable to use to fill out cells)
+
 new_tidy_data <- wide_data %>% 
   gather(year, fertility, '1960':'2015')
 head(new_tidy_data)
@@ -74,8 +77,16 @@ dat %>%
   spread(variable_name, value) %>%
   rename(fertility = fertility_NA)
 
+##“Key” should specify which column has the unique values that will be used as the column names,
+## and “value” should specify which values will be spread across those columns.
 
 
+co2
+co2_wide <- data.frame(matrix(co2, ncol = 12, byrow = TRUE)) %>% 
+  setNames(1:12) %>%
+  mutate(year = as.character(1959:1997))
+co2_wide
+co2_tidy <- gather(co2_wide, )
 
-
-
+?gather
+?separate
