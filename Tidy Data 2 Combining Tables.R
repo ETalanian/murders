@@ -60,3 +60,19 @@ head(new_tab)
 tab1 <- tab[1:2,]
 tab2 <- tab[3:4,]
 bind_rows(tab1,tab2)
+
+intersect(1:10, 6:15)
+intersect(c('a','b','c'),c('b','c','d'))
+tab1 <- tab[1:5,]
+tab2 <- tab[3:7,]
+intersect(tab1,tab2)
+
+union(c('a','b','c'),c('b','c','d'))
+tab1 <- tab[1:5,]
+tab2 <- tab[3:7,]
+union(tab1,tab2)
+
+#unlike intersect and union, this function is not symmetric
+setdiff(1:10,6:15)
+setdiff(6:15,1:10)
+
