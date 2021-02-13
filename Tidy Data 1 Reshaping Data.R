@@ -21,8 +21,8 @@ wide_data <- read_csv(filename)
 select(wide_data,country,'1960':'1967')
 ##wide format:  Each row includes several observations, and one of the variables is stored in the header
 
-##gather(data_set, *sets name of columns that will hold variable in*, *sets column name for columns*, *columns to be gathered*)
-##spread(data_set, *sets which variable will be used as the column names*, *which variable to use to fill out cells)
+##gather(data_set, *LOOKS FOR NAME of COLUMN in TARGET DATA*, *SETS NEW column NAME for columns*, *columns to be gathered*)
+##spread(data_set, *LOOKS FOR VARIABLE in TARGET DATA for column name (year -> 1960:1967)*, *which variable to use to fill out cells(fertility -> dbl)*)
 
 new_tidy_data <- wide_data %>% 
   gather(year, fertility, '1960':'2015')
@@ -60,7 +60,7 @@ head(dat)
 
 #separate `year` and `type` via identifier _ 
 dat %>% separate(key, c("year","variable_name"), "_")
-#_ is the default separater, so we can just write
+#_ is the default separator, so we can just write
 dat %>% separate(key, c('year','variable_name'))
 #warning shows that "life_expectancy" breaks due to this
 #split on all underscores, pad empty cells with NA
@@ -86,7 +86,20 @@ co2_wide <- data.frame(matrix(co2, ncol = 12, byrow = TRUE)) %>%
   setNames(1:12) %>%
   mutate(year = as.character(1959:1997))
 co2_wide
-co2_tidy <- gather(co2_wide, )
+co2_tidy <- gather(co2_wide,month,co2,-year )
+co2_tidy
+co2_tidy %>% ggplot(aes(as.numeric(month), co2, color=year)) + geom_line()
 
-?gather
-?separate
+data(admissions)
+dat <- admissions %>% select(-applicants)
+dat
+#reshape data to be count sorted by columns `Major, men, women`
+dat_tidy <- spread(dat, gender, admitted)
+dat_tidy
+
+tmp <- gather(admissions, key, value, admitted:applicants)
+tmp
+#Combine the key and gender and create a new column called column_name to get a variable with the following values: 
+# admitted_men, admitted_women, applicants_men and applicants_women. Save the new data as tmp2.
+tmp2 <- unite(tmp,column_name, c(key,gender))
+tmp2
