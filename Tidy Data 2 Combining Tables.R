@@ -72,7 +72,16 @@ tab1 <- tab[1:5,]
 tab2 <- tab[3:7,]
 union(tab1,tab2)
 
-#unlike intersect and union, this function is not symmetric
+#unlike intersect and union, setdiff is not symmetric
 setdiff(1:10,6:15)
 setdiff(6:15,1:10)
+
+tab1 <- tab[1:5,]
+tab2 <- tab[3:7,]
+setdiff(tab1,tab2)
+setdiff(tab2,tab1)
+
+setequal(1:5,1:6)
+setequal(1:5,5:1)
+setequal(tab1, tab2)
 
