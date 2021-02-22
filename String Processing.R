@@ -33,3 +33,18 @@ murders_raw$population[1:3]
 as.numeric(murders_raw$population[1:3])
 #The stringr package from the tidyverse includes a variety of string processing functions that begin with str_
 #        and take the string as the first argument, which makes them compatible with the pipe.
+
+commas <- function(x) any(str_detect(x, ','))
+#murders_raw %>% summarise_all(funs(commas))
+#Due to deprecated error, per the error's recomendation, I will use `list`
+murders_raw %>% summarise_all(list(commas))
+test_1 <- str_replace_all(murders_raw$population, ',', '')
+test_1 <- as.numeric(test_1)
+test_1
+test_2 <- parse_number(murders_raw$population)
+test_2
+#let the computer do the heavy lifting
+identical(test_1, test_2)
+
+murders_new <- murders_raw %>% mutate_at(2:3, parse_number)
+head(murders_new)
