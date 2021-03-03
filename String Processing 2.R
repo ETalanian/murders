@@ -136,3 +136,40 @@ problems %>%
   str_detect(pattern) %>% 
   sum()
 
+#Groups with Regex
+pattern_wo_groups <- "^[4-7],\\d*$"
+pattern_w_groups <- "^([4-7]),(\\d*)$"
+yes <- c("5,9", "5,11", "6,", "6,1")
+no <- c("5'9", ",", "2,8", "6.1.1")
+s <- c(yes, no)
+str_detect(s, pattern_wo_groups)
+str_detect(s, pattern_w_groups)
+str_match(s,pattern_w_groups)
+str_extract(s, pattern_w_groups)
+#The regex special char for the i-th group is \\i
+#\\1 is the value extracted from the first group
+#\\2 is the value extracted from the second group
+#etc
+
+#replace a comma with a period ONLY when it is between 2 digits
+pattern_w_groups <- "^([4-7]),(\\d*)$"
+yes <- c("5,9", "5,11", "6,", "6,1")
+no <- c("5'9", ",", "2,8", "6.1.1")
+s <- c(yes, no)
+str_replace(s, pattern_w_groups, "\\1'\\2")
+
+#holy mother of god let's go
+pattern_w_groups <- "^([4-7])\\s*[,\\.\\s+]\\s*(\\d*)$"
+#Translation:
+#^ <- Start of string
+#[4-7] <- on digit, either 4, 5, 6, or 7
+#\\s* <- none or more white spaces
+#[,\\.\\s+] <- feet symbol is either a comma, a period, or at least one space
+#\\s* <- none or more white spaces
+#\\d* <- none or more digits
+#$ <- End of string
+str_subset(problems, pattern_w_groups) %>% head
+str_subset(problems, pattern_w_groups) %>% 
+  str_replace(pattern_w_groups, "\\1'\\2") %>% head
+#Only one error, 5'25
+
