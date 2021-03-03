@@ -65,3 +65,35 @@ str_detect(s,pattern)
 
 str_view(s,pattern)
 str_view_all(s,pattern)
+
+#Character Classes
+str_view(s,"[56]")
+str_view(s,'[4-7]') #'[0-9]' == '\\d'
+#[1-20] == 1 through 2 & 0
+#[a-z] == abc...xyz
+#[A-Z] == ABC...XYZ
+#[a-zA-Z] == abc.........XYZ
+
+#Anchors
+# ^ <- Beginning of string
+# $ <- End of string
+#^\\d$ <- Start of the string, followed by 1 digit, followed by the end of the string
+pattern <- "^\\d$"
+yes <- c("1", "5", "9")
+no <- c("12", "123", " 1", "a4", "b")
+s <- c(yes, no)
+str_view(s, pattern)
+#2nd "1" doesn't show because it is " 1" not "1"
+#\\d{1,2} <- One OR Two digits
+pattern <- "^\\d{1,2}$"
+yes <- c("1", "5", "9", "12")
+no <- c("123", "a4", "b")
+str_view(c(yes, no), pattern)
+#'optimal' parse
+pattern <- "^[4-7]'\\d{1,2}\"$"
+          #Start, 4-7 feet, 1-2 digits for inches
+yes <- c("5'7\"", "6'2\"",  "5'12\"", "4'")
+no <- c("6,2\"", "6.2\"","I am 5'11\"", "3'2\"", "64")
+str_detect(yes, pattern)
+str_detect(no, pattern)
+#This parse fails on flat feet.
