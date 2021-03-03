@@ -97,3 +97,42 @@ no <- c("6,2\"", "6.2\"","I am 5'11\"", "3'2\"", "64")
 str_detect(yes, pattern)
 str_detect(no, pattern)
 #This parse fails on flat feet.
+
+
+#Search and Replace with Regex
+# number of entries matching our desired pattern
+pattern <- "^[4-7]'\\d{1,2}\"$"
+sum(str_detect(problems, pattern))
+
+#Inspect examples of entries with problems
+problems[c(2, 10, 11, 12, 15)] %>% str_view(pattern)
+str_subset(problems, "inches")
+str_subset(problems, "''")
+#inch marker at end is irrelevant
+pattern <- "^[4-7]'\\d{1,2}$"
+problems %>%
+  str_replace("feet|ft|foot","'") %>%
+  str_replace("inches|in|''|\"", "") %>% #kill off all inches because now irrelevant
+  str_detect(pattern) %>%
+  sum
+#\\s <- space
+pattern2 <- "^[4-7]'\\s\\d{1,2}\"$"
+str_subset(problems, pattern2)
+#* <- zero or more instances of the previous character
+yes <- c("AB", "A1B", "A11B", "A111B", "A1111B")
+no <- c("A2B", "A21B")
+str_detect(yes, "A1*B")
+str_detect(no, "A1*B")
+#? <- zero or one instances of previous character
+#+ <- one or more instances of previous character
+data.frame(string = c("AB", "A1B", "A11B", "A111B", "A1111B"),
+           none_or_more = str_detect(yes, "A1*B"),
+           nore_or_once = str_detect(yes, "A1?B"),
+           once_or_more = str_detect(yes, "A1+B"))
+pattern <- "^[4-7]\\s*'\\s*\\d{1,2}$"
+problems %>% 
+  str_replace("feet|ft|foot", "'") %>% 
+  str_replace("inches|in|''|\"", "") %>% 
+  str_detect(pattern) %>% 
+  sum()
+
