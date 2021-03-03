@@ -173,3 +173,27 @@ str_subset(problems, pattern_w_groups) %>%
   str_replace(pattern_w_groups, "\\1'\\2") %>% head
 #Only one error, 5'25
 
+#Testing and Improving
+not_inches_or_cm <- function(x, smallest = 50, tallest = 84){
+  inches <- suppressWarnings(as.numeric(x))
+  ind <- !is.na(inches) &
+    ((inches >= smallest & inches <= tallest) |
+       (inches/2.54 >= smallest & inches/2.54 <= tallest))
+  !ind
+}
+problems <- reported_heights %>%
+  filter(not_inches_or_cm(height)) %>%
+  .$height
+length(problems)
+converted <- problems %>% 
+  str_replace("feet|foot|ft", "'") %>% #convert feet symbols to '
+  str_replace("inches|in|''|\"", "") %>%  #remove inches symbols
+  str_replace("^([4-7])\\s*[,\\.\\s+]\\s*(\\d*)$", "\\1'\\2") #format
+
+#Find proportion of entries that fit the pattern after reformatting
+pattern <- "^[4-7]\\s*'\\s*\\d{1,2}$"
+index <- str_detect(converted, pattern)
+mean(index)
+#61.5% match
+converted[!index]    #show non-matches
+
