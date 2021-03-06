@@ -5,3 +5,11 @@ library(stringr)
 library(rvest)
 
 data(reported_heights)
+
+s <- c("5'10", "6'1")
+tab <- data.frame(x=s)
+tab %>% separate(x, c("feet", "inches"), sep="'")
+s <- c("5'10", "6'1\"", "5'8inches")
+tab <- data.frame(x=s)
+tab %>% separate(x, c("feet", "inches"), sep="'", fill = "right")
+tab %>% extract(x,c("feet", "inches"), regex = "(\\d)'(\\d{1,2})")
