@@ -58,3 +58,44 @@ x <- x[-1,]
 x %>% as_data_frame() %>%
   setNames(col_names) %>% 
   mutate_all(parse_guess)
+
+
+#Recoding
+data("gapminder")
+gapminder %>%
+  filter(region=="Caribbean") %>%
+  ggplot(aes(year, life_expectancy, color = country)) +
+  geom_line()
+#some country names are too long, so we cut them down
+gapminder %>% filter(region=="Caribbean") %>%
+  mutate(country = recode(country, 
+                          'Antigua and Barbuda'="Barbuda",
+                          'Dominican Republic' = "DR",
+                          'St. Vincent and the Grenadines' = "St. Vincent",
+                          'Trinidad and Tobago' = "Trinidad")) %>%
+  ggplot(aes(year, life_expectancy, color = country)) +
+  geom_line()
+#record works like ctrl+h
+
+
+
+
+
+##Assessment 2 scratchpad:
+library(rvest)
+library(tidyverse)
+library(stringr)
+url <- "https://en.wikipedia.org/w/index.php?title=Opinion_polling_for_the_United_Kingdom_European_Union_membership_referendum&oldid=896735054"
+tab <- read_html(url) %>% html_nodes("table")
+polls <- tab[[5]] %>% html_table(fill = TRUE)
+
+head(polls)
+
+names(polls) <- c("dates", "remain", "leave", "undecided", "lead", "samplesize", "pollster", "poll_type", "notes")
+polls <- polls[str_detect(polls$remain, "%"), -9]
+nrow(polls)
+str_replace(polls$undecided, "N/A", "0")
+
+temp <- str_extract_all(polls$dates, "\\d+\\s[a-zA-Z]{3,5}")
+end_date <- sapply(temp, function(x) x[length(x)]) # take last element (handles polls that cross month boundaries)
+head(temp)
