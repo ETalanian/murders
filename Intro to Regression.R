@@ -46,4 +46,27 @@ galton_heights %>%
   summarize(mean(father), sd(father), mean(son), sd(son))
 galton_heights %>% ggplot(aes(father, son)) +
   geom_point(alpha=.5)
+galton_heights %>% summarise(cor(father,son))
 
+set.seed(0) #sync for academia
+
+#Sample correlation via RNG
+R <- sample_n(galton_heights, 25, replace=TRUE) %>%
+  summarise(cor(father,son))
+R
+#Monte Carlo it
+B <- 1000
+N <- 25
+R <- replicate(B,{
+  sample_n(galton_heights, N, replace=TRUE) %>%
+    summarise(rr=cor(father,son)) %>% .$r
+    })
+data.frame(R) %>% ggplot(aes(R)) + geom_histogram(binwidth = .05, color = "black")
+mean(R)
+sd(R)
+
+#QQ-plot to evaluate whether N is large enough
+data.frame(R) %>%
+  ggplot(aes(sample = R)) +
+  stat_qq() +
+  geom_abline(intercept = mean(R), slope = sqrt((1-mean(R)^2)/(N-2)))
