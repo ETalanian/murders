@@ -70,3 +70,12 @@ data.frame(R) %>%
   ggplot(aes(sample = R)) +
   stat_qq() +
   geom_abline(intercept = mean(R), slope = sqrt((1-mean(R)^2)/(N-2)))
+#Correlation coefficient between number of runs per game and number of at bats per game
+Teams %>% filter(yearID %in% 1961:2001) %>%
+  summarise(cor(R/G,AB/G))
+#Correlation coefficient between win rate (number of wins per game) and number of errors per game
+Teams %>% filter(yearID %in% 1961:2001) %>%
+  summarise(cor(W/G,E/G))
+#Correlation coefficient between doubles (X2B) per game and triples (X3B) per game
+Teams %>% filter(yearID %in% 1961:2001) %>%
+  summarise(cor(X2B/G,X3B/G))
