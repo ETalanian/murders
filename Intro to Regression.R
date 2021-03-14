@@ -1,7 +1,10 @@
+install.packages("HistData")
 library(Lahman)
 library(tidyverse)
 library(dslabs)
+library(HistData)
 ds_theme_set()
+data("GaltonFamilies")
 
 #HRs vs Wins
 Teams %>% filter(yearID %in% 1961:2001) %>%
@@ -33,3 +36,14 @@ Teams %>% filter(yearID %in% 1961:2001) %>%
   mutate(T_per_game = X3B / G, D_per_game = X2B / G) %>%
   ggplot(aes(T_per_game, D_per_game)) + 
   geom_point(alpha = 0.5)
+
+
+galton_heights <- GaltonFamilies %>%
+  filter(childNum==1 & gender=="male") %>%
+  select(father,childHeight) %>%
+  rename(son=childHeight)
+galton_heights %>%
+  summarize(mean(father), sd(father), mean(son), sd(son))
+galton_heights %>% ggplot(aes(father, son)) +
+  geom_point(alpha=.5)
+
