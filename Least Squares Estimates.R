@@ -45,3 +45,17 @@ fit <- lm(son ~ father, data = galton_heights)
 #What we're predicting ~ What we're using to predict
 fit
 summary(fit)
+
+#LSE are Random Variables
+#To midigate randomization, we Monte Carlo Simulate
+B <- 1000
+N <- 50
+lse <- replicate(B, {
+  sample_n(galton_heights, N , replace = TRUE) %>%
+    lm(son ~ father, data = .) %>% .$coef
+})
+lse <- data.frame(beta_0 = lse[1,], beta_1 = lse[2,])
+
+sample_n(galton_heights, N, replace=TRUE) %>%
+  lm(son ~ father, data = .) %>% summary
+
