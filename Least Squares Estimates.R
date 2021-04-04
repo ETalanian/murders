@@ -39,3 +39,9 @@ results %>% ggplot(aes(beta1,rss)) + geom_line()+
 #beta1 min reads 0.65, but this is for when beta0 is fixed at 25
 #We don't know if (25,0.65) minimizes the equation across all pairs.
 
+#We can obtain the LSE using the lm function
+fit <- lm(son ~ father, data = galton_heights)
+#   ~
+#What we're predicting ~ What we're using to predict
+fit
+summary(fit)
