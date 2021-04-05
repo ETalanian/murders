@@ -74,7 +74,7 @@ Y_hat <- predict(fit, se.fit = TRUE)
 names(Y_hat)
 
 
-#Assignment Scratchpad
+#Assessment Scratchpad
 rss <- function(beta0, beta1, data){
   resid <- galton_heights$son - (beta0+beta1*galton_heights$father)
   return(sum(resid^2))
