@@ -72,3 +72,43 @@ galton_heights %>%
 fit <- galton_heights %>% lm(son ~ father, data=.)
 Y_hat <- predict(fit, se.fit = TRUE)
 names(Y_hat)
+
+
+#Assignment Scratchpad
+rss <- function(beta0, beta1, data){
+  resid <- galton_heights$son - (beta0+beta1*galton_heights$father)
+  return(sum(resid^2))
+}
+beta1 = seq(0,1,len=nrow(galton_heights))
+results <- data.frame(beta1 = beta1,
+                      rss = sapply(beta1, rss, beta0 = 36))
+results %>% ggplot(aes(beta1,rss)) + geom_line()+ 
+  geom_line(aes(beta1, rss), col=2)
+
+library(Lahman)
+
+Teams %>% filter(yearID %in% 1961:2001) %>%
+  mutate(HR_per_game = HR / G, BB_per_game = BB / G) %>%
+  ggplot(aes(HR_per_game, BB_per_game)) + 
+  geom_point(alpha = 0.5)
+Teams %>% filter(yearID %in% 1961:2001) %>%
+  summarise(cor(HR/G,BB/G))
+
+set.seed(1989, sample.kind="Rounding") #if you are using R 3.6 or later
+library(HistData)
+data("GaltonFamilies")
+options(digits = 3)    # report 3 significant digits
+
+female_heights <- GaltonFamilies %>%     
+  filter(gender == "female") %>%     
+  group_by(family) %>%     
+  sample_n(1) %>%     
+  ungroup() %>%     
+  select(mother, childHeight) %>%     
+  rename(daughter = childHeight)
+
+female_heights %>% ggplot(aes(mother, daughter)) +  
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm")
+female_heights %>% lm(mother ~ daughter, data=.)
+
