@@ -59,3 +59,16 @@ lse <- data.frame(beta_0 = lse[1,], beta_1 = lse[2,])
 sample_n(galton_heights, N, replace=TRUE) %>%
   lm(son ~ father, data = .) %>% summary
 
+galton_heights %>% ggplot(aes(son, father)) + 
+  geom_point() + 
+  geom_smooth(method = "lm")
+
+#predict() takes an lm object as input and returns a confidence prediction
+galton_heights %>%
+  mutate(Y_hat = predict(lm(son ~ father, data = .))) %>%
+  ggplot(aes(father, Y_hat)) + 
+  geom_line()
+#`predict` methodology
+fit <- galton_heights %>% lm(son ~ father, data=.)
+Y_hat <- predict(fit, se.fit = TRUE)
+names(Y_hat)
