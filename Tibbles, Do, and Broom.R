@@ -32,3 +32,23 @@ dat %>% group_by(HR) %>% class()
 
 #manipulation verbs like select(), filter(), mutate(), and arrange() preserve the class of the input
 
+#Differences between Tibbles and Data Frames
+#1. Tibbles display in a more readable format
+Teams
+as_tibble(Teams)
+#2. Subsets of data frames are not always data frames
+#   Subsets of tibbles are always tibbles
+class(Teams[,20])
+class(as_tibble(Teams)[,20])
+##If you want the original vector that defines a column in a tibble, you use the accessor $
+class(as_tibble(Teams)$HR)
+#Tibbles give a warning if you try to access a column that does not exist
+#data frames do not
+Teams$hr
+as_tibble(Teams)$hr
+#3. Tibbles can have complex entries
+#   Data frames can only accept a vector of numbers, strings, or boolean in its columns
+tibble(id = c(1,2,3), func = c(mean,median,sd))
+#4. Tibbles can be grouped
+#group_by(tbl) returns a grouped tibble, this works with Tidyverse
+
