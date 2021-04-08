@@ -89,3 +89,35 @@ dat %>%
   do(get_lse(.))
 #this gives us the estimates of the slope and intercept, as well as the standard errors
 
+#Broom has 3 main functions: tidy(), glance(), and augment()
+library(broom)
+#tidy() returns esitmates and related information as a data frame
+fit <- lm(R ~ BB, data = dat)
+fit
+tidy(fit)
+#add confidence intervals
+tidy(fit, conf.int = TRUE)
+#because this outcome is a data frame, we can use the output with do()
+dat %>%
+  group_by(HR)%>%
+  do(tidy(lm(R ~ BB, data = .), conf.int = TRUE))
+#Now we filter for the data we want
+dat %>%
+  group_by(HR)%>%
+  do(tidy(lm(R ~ BB, data= .), conf.int = TRUE)) %>%
+  filter(term == "BB") %>%
+  select(HR, estimate, conf.low, conf.high)
+#this table is very visualization-friendly
+dat %>%
+  group_by(HR)%>%
+  do(tidy(lm(R ~ BB, data= .), conf.int = TRUE)) %>%
+  filter(term == "BB") %>%
+  select(HR, estimate, conf.low, conf.high) %>%
+  ggplot(aes(HR, y=estimate, ymin=conf.low, ymax=conf.high))+
+  geom_errorbar() +
+  geom_point()
+
+#glance(): model-specific outcomes
+#augment(): observation-specific outcomes
+glance(fit)
+augment(fit)
