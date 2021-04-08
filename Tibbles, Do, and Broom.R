@@ -52,3 +52,40 @@ tibble(id = c(1,2,3), func = c(mean,median,sd))
 #4. Tibbles can be grouped
 #group_by(tbl) returns a grouped tibble, this works with Tidyverse
 
+#do() serves as a bridge between R functions, such as lm(), and the tidyverse
+dat %>%
+  group_by(HR)%>%
+  do(fit = lm(R ~ BB, data=.))
+#do() created a data frame with the first column being strata, 
+#and a customly named column, which contains the result of the lm() call
+#if this is not named, do() will return the actual output of lm(), not a data frame, which will error out
+dat %>%
+  group_by(HR)%>%
+  do(lm(R ~ BB, data=.))
+#Build a function that returns only what you want in the form of a data frame:
+get_slope <- function(data){
+  fit <- lm(R ~ BB, data = data)
+  data.frame(slope = fit$coefficients[2],
+             se = summary(fit)$coefficient[2,2])
+}
+#If we do not name the output, which we can since we're already getting a data frame, we get the following:
+dat %>%
+  group_by(HR) %>%
+  do(get_slope(.))
+#If we do use a name, we get a complex tibble with a column having a data frame in each cell (not useful)
+dat %>%
+  group_by(HR)%>%
+  do(slope = get_slope(.))
+
+#If the data frame being returned has more than one row, they will be concatenated
+get_lse <- function(data){
+  fit <- lm(R ~ BB, data = data)
+  data.frame(term = names(fit$coefficients),
+             slope = fit$coefficients,
+             se = summary(fit)$coefficient[,2])
+}
+dat %>%
+  group_by(HR)%>%
+  do(get_lse(.))
+#this gives us the estimates of the slope and intercept, as well as the standard errors
+
