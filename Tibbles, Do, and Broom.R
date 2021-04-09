@@ -121,3 +121,32 @@ dat %>%
 #augment(): observation-specific outcomes
 glance(fit)
 augment(fit)
+
+
+#Assessment Scratchpad
+library(tidyverse)
+library(HistData)
+data("GaltonFamilies")
+set.seed(1, sample.kind = "Rounding") # if you are using R 3.6 or later
+galton <- GaltonFamilies %>%
+  group_by(family, gender) %>%
+  sample_n(1) %>%
+  ungroup() %>% 
+  gather(parent, parentHeight, father:mother) %>%
+  mutate(child = ifelse(gender == "female", "daughter", "son")) %>%
+  unite(pair, c("parent", "child"))
+
+galton
+
+t <- galton %>% group_by(pair)
+nrow(t %>% filter(pair == "father_daughter"))
+nrow(t %>% filter(pair == "mother_son"))
+fd <- t %>% filter(pair == "father_daughter")
+fs <- t %>% filter(pair == "father_son")
+md <- t %>% filter(pair == "mother_daughter")
+ms <- t %>% filter(pair == "mother_son")
+
+galton %>% 
+  group_by(pair) %>% 
+  summarize(cor = cor(parentHeight, childHeight))
+
