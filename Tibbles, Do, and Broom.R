@@ -150,3 +150,4 @@ galton %>%
   group_by(pair) %>% 
   summarize(cor = cor(parentHeight, childHeight))
 
+t %>% summarize(r = cor(father, daughter)) %>% pull(r)
