@@ -120,3 +120,58 @@ players %>% select(nameFirst, nameLast, POS, salary, R_hat) %>%
 players %>% ggplot(aes(salary, R_hat, color = POS)) + 
   geom_point() + 
   scale_x_log10()
+
+
+#Sophomore Slumps
+#Create a table with PlayerID, Names, and Position
+playerInfo <- Fielding %>%
+  group_by(playerID) %>%
+  arrange(desc(G)) %>%
+  slice(1) %>%
+  ungroup() %>%
+  left_join(Master, by="playerID") %>%
+  select(playerID, nameFirst, nameLast, POS)
+playerInfo
+#Clean up table
+ROY <- AwardsPlayers %>%
+  filter(awardID == "Rookie of the Year") %>%
+  left_join(playerInfo, by='playerID') %>%
+  rename(rookie_year = yearID) %>%
+  right_join(Batting, by='playerID') %>%
+  mutate(AVG = H/AB) %>%
+  filter(POS != "P") #no pitchers allowed >:(
+ROY
+#Clean more to only keep rookie and sophomores
+ROY <- ROY %>%
+  filter(yearID == rookie_year | yearID == rookie_year+1) %>%
+  group_by(playerID) %>%
+  mutate(rookie = ifelse(yearID ==min(yearID), "rookie", "sophomore")) %>%
+  filter(n()==2) %>%
+  ungroup %>%
+  select(playerID, rookie_year, rookie, nameFirst, nameLast, AVG)
+ROY
+#Clean up one last time to group the same person across 2 years
+ROY <- ROY %>% spread(rookie, AVG) %>% arrange(desc(rookie))
+ROY
+
+
+two_years <- Batting %>%
+  filter(yearID %in% 2013:2014) %>%
+  group_by(playerID, yearID) %>%
+  filter(sum(AB) >= 130) %>%
+  summarize(AVG = sum(H)/sum(AB)) %>%
+  ungroup %>%
+  spread(yearID, AVG) %>%
+  filter(!is.na(`2013`) & !is.na(`2014`)) %>%
+  left_join(playerInfo, by="playerID") %>%
+  filter(POS!="P") %>%
+  select(-POS) %>%
+  arrange(desc(`2013`)) %>%
+  select(-playerID)
+two_years
+#sort by worst performers
+arrange(two_years, `2013`)
+#disproving the 'sophomore slump'
+two_years %>% ggplot(aes(`2013`, `2014`)) + geom_point()
+summarize(two_years, cor(`2013`,`2014`))
+#The main reason stats go down by an average of 8% is due to polling from the top% in year 1
