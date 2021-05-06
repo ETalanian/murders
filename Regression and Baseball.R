@@ -196,3 +196,24 @@ augment(fit) %>%
   geom_point(aes(time, observed_distance)) +
   geom_line(aes(time, .fitted), col = "blue")
 tidy(fit, conf.int = TRUE)
+
+
+
+#assessment scratchpad
+fit <- Teams %>%
+  filter(yearID %in% 2011) %>%
+  mutate(BB = BB/G, HR = HR/G, R = R/G) %>%
+  lm(R ~ BB + HR, data=.)
+
+tidy(fit, conf.int = TRUE)
+
+res <- Teams %>%
+  filter(yearID %in% 1961:2018) %>%
+  group_by(yearID) %>%
+  do(tidy(lm(R ~ BB + HR, data = .))) %>%
+  ungroup() 
+res %>%
+  filter(term == "BB") %>%
+  ggplot(aes(yearID, estimate)) +
+  geom_point() +
+  geom_smooth(method = "lm")
