@@ -175,3 +175,24 @@ arrange(two_years, `2013`)
 two_years %>% ggplot(aes(`2013`, `2014`)) + geom_point()
 summarize(two_years, cor(`2013`,`2014`))
 #The main reason stats go down by an average of 8% is due to polling from the top% in year 1
+
+##Measurement Error Models
+#Ex: Galileo dicovering the velocity of a falling object
+falling_object <- rfalling_object()
+falling_object %>%
+  ggplot(aes(time, observed_distance)) + 
+  geom_point() +
+  ylab("Distance in Meters") + 
+  xlab("Time in Seconds")
+
+fit <- falling_object %>%
+  mutate(time_sq = time^2) %>%
+  lm(observed_distance~time+time_sq, data=.)
+
+tidy(fit)
+#check if the estimated parabola fits the data
+augment(fit) %>%
+  ggplot() +
+  geom_point(aes(time, observed_distance)) +
+  geom_line(aes(time, .fitted), col = "blue")
+tidy(fit, conf.int = TRUE)
