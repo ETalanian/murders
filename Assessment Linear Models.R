@@ -13,3 +13,4 @@ Teams_small %>%
 fit <- Teams_small %>%
   lm(avg_attendance ~ R + HR, data=.)
 tidy(fit, conf.int = TRUE)
+#Gives esitmates of R=14 and HR=16.8, which are not correct
