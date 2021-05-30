@@ -69,12 +69,61 @@ admissions %>%
 
 admissions %>% group_by(gender) %>% summarize(average = mean(admitted))
 
+?admissions
 
 
 
+#Assessment: Confounding
+data("research_funding_rates")
+research_funding_rates
 
+losers_men <- sum(research_funding_rates$applications_men - research_funding_rates$awards_men)
+losers_women <- sum(research_funding_rates$applications_women - research_funding_rates$awards_women)
 
+losers_men
+losers_women
 
+perc_men <- sum(research_funding_rates$applications_men/research_funding_rates$awards_men)
+perc_women <- sum(research_funding_rates$applications_women/research_funding_rates$awards_women)
 
+perc_men
+perc_women
 
+sum(research_funding_rates$awards_total)
+sum(research_funding_rates$awards_men)
 
+?research_funding_rates
+
+gender_table <- research_funding_rates %>% 
+  select(-discipline) %>% 
+  summarize_all(funs(sum)) %>%
+  summarize(yes_men = awards_men, 
+            no_men = applications_men - awards_men, 
+            yes_women = awards_women, 
+            no_women = applications_women - awards_women) %>%
+  gather %>%
+  separate(key, c("Awarded", "gender")) %>%
+  spread(gender, value)
+gender_table
+
+gender_table %>%
+  mutate(men = round(men/sum(men)*100, 1),
+         women = round(women/sum(women)*100, 1)) %>% 
+  filter(Awarded == 'yes')
+
+gender_table %>% 
+  select(-Awarded) %>% 
+  chisq.test() %>% 
+  tidy
+
+dat <- research_funding_rates %>% 
+  mutate(discipline = reorder(discipline, success_rates_total)) %>%
+  rename(success_total = success_rates_total,
+         success_men = success_rates_men,
+         success_women = success_rates_women) %>%
+  gather(key, value, -discipline) %>%
+  separate(key, c("type", "gender")) %>%
+  spread(type, value) %>%
+  filter(gender != "total")
+dat
+sort(dat$success, decreasing = FALSE)
