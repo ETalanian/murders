@@ -27,3 +27,21 @@ sim_data %>% filter(group == res$group[which.max(res$r)]) %>%
   do(tidy(lm(y ~ x, data=.)))
 
 
+#Correlation is Not Causation: Outliers
+set.seed(1)
+x <- rnorm(100,100,1)
+y <- rnorm(100,84,1)
+x[-23] <- scale(x[-23])
+y[-23] <- scale(y[-23])
+##tibble(x,y) %>% ggplot(aes(x,y)) + geom_point((alpha = 0.5))
+#Plot shows the outlier
+qplot(x, y, alpha = 0.5)
+cor(x,y)
+#9.88
+cor(x[-23], y[-23])
+#-0.001
+qplot(x[-23], y[-23])
+cor(rank(x), rank(y))
+#0.0658
+cor(x,y, method = 'spearman')
+#0.0658
