@@ -13,48 +13,54 @@ library(dslabs)
 
 data(heights)
 
+#categorical outcome y|x
 y <- heights$sex
 x <- heights$height
-
+#set seed for controlled rng variability
 set.seed(2)
+#split your data randomly in half to create your training data (Q&A) and testing data (Q&?) 
+#`times` defines how many random samples of indexes to return
+#`p`  is the proportion of the index represented
+#`list` decides if you want indexes to be returned as a list or not
 test_index <- createDataPartition(y, times = 1, p = 0.5, list = FALSE)
-
+#formally split the data
 test_set <- heights[test_index, ]
 train_set <- heights[-test_index, ]
-
+#The most basic machine learning, 50/50 guessing
 y_hat <- sample(c("Male", "Female"),length(test_index), replace = TRUE)
-
-y_hat <- sample(c("Male", "Female"), length(test_index), replace = TRUE) %>% 
+#Caret package recommends that categorical outcomes be coded as factors
+y_hat <- sample(c("Male", "Female"),length(test_index), replace = TRUE) %>% 
      factor(levels = levels(test_set$sex))
+#Overall proportion that is predicted correctly (overall accuracy)
+mean(y_hat == test_set$sex) #Accuracy is ~50%, because we're making 50/50 guesses
 
-mean(y_hat == test_set$sex)
-
+#Check data to see that, on average, males are slightly taller than females
 heights %>% group_by(sex) %>% summarize(mean(height), sd(height))
-
+#predict male if height is within two standard deviations from the average male (62")
 y_hat <- ifelse(x > 62, "Male", "Female") %>% factor(levels = levels(test_set$sex))
-mean(y == y_hat)
-
+mean(y == y_hat) #Accuracy goes from 50% to 80%
+#examine the accuracy we obtain with 10 different cutoffs and peck the best one
 cutoff <- seq(61, 70)
 accuracy <- map_dbl(cutoff, function(x){
      y_hat <- ifelse(train_set$height > x, "Male", "Female") %>% 
           factor(levels = levels(test_set$sex))
      mean(y_hat == train_set$sex)
 })
-
+#plot the accuracy on the training set
 data.frame(cutoff, accuracy) %>% 
      ggplot(aes(cutoff, accuracy)) + 
      geom_point() + 
      geom_line() 
 
-max(accuracy)
+max(accuracy) #83.6%, much higher than 50%
 
 best_cutoff <- cutoff[which.max(accuracy)]
-best_cutoff
-
+best_cutoff #Max Accuracy with a cutoff of 64"
+#Check cutoff on test set
 y_hat <- ifelse(test_set$height > best_cutoff, "Male", "Female") %>% 
      factor(levels = levels(test_set$sex))
 y_hat <- factor(y_hat)
-mean(y_hat == test_set$sex)
+mean(y_hat == test_set$sex) #81.7%
 
 ### Confusion Matrix
 
