@@ -63,17 +63,18 @@ y_hat <- factor(y_hat)
 mean(y_hat == test_set$sex) #81.7%
 
 ### Confusion Matrix
-
+#Tabulate each combination of prediction and actual value
 table(predicted = y_hat, actual = test_set$sex)
-
+#In practice, we get very different accuracy for males (93.3%) and females (42.0%)
 test_set %>% 
      mutate(y_hat = y_hat) %>%
      group_by(sex) %>% 
      summarize(accuracy = mean(y_hat == sex))
-
+#this error is due, in part, to prevalence.  77.3% of the data set is male
 prev <- mean(y == "Male")
 prev
-
+#sensitivity is defined as 'the ability of an algorithm to predict a positive outcome when the actual outcome is positive'
+#specificity is defined as 'the ability of an algorithm to not predict the positive, when the actual outcome is not positive'
 mat <- matrix(c("True positives (TP)", "False negatives (FN)", 
                 "False positives (FP)", "True negatives (TN)"), 2, 2)
 colnames(mat) <- c("Actually Positive", "Actually Negative")
@@ -83,6 +84,13 @@ as.data.frame(mat) %>% knitr::kable()
 confusionMatrix(data = y_hat, reference = test_set$sex)
 
 ### Balanced accuracy and F1 score
+#One metric that is valued over overall accuracy is the average of sensitivity and specificity, referred to as 'balanced accuracy'
+#Because sensitivity and specificity are rates, it's appropriate to compute the harmonic average as an 'F1-score':
+#        1 / (0.5 x ( (1/recall) + (1/precision) ))
+#or      2 x ( (precision x recall) /  (precision + recall) )
+
+#Example of Sensitivity vs Specificity
+#Failing to predict a plane will crash (specificity) is far more costly than grounding a plane you incorrectly thought would crash
 
 cutoff <- seq(61, 70)
 F_1 <- map_dbl(cutoff, function(x){
@@ -95,7 +103,7 @@ data.frame(cutoff, F_1) %>%
      ggplot(aes(cutoff, F_1)) + 
      geom_point() + 
      geom_line()
-
+#61%
 max(F_1)
 
 best_cutoff <- cutoff[which.max(F_1)]
@@ -104,6 +112,8 @@ best_cutoff
 y_hat <- ifelse(test_set$height > best_cutoff, "Male", "Female") %>% 
      factor(levels = levels(test_set$sex))
 confusionMatrix(data = y_hat, reference = test_set$sex)
+#Takes height, predicts female if you're 66 inches or shorter.
+
 
 ### Prevalence matters in practice
 
